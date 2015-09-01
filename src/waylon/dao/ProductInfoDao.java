@@ -1,9 +1,11 @@
 package waylon.dao;
 
+import java.util.List;
+
 import waylon.domain.ProductInfo;
 
 public interface ProductInfoDao {
 	
-	public ProductInfo getAllProdutInfo() ;
+	public List<ProductInfo> getAllProdutInfo() ;
 
 }

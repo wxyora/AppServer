@@ -10,7 +10,7 @@
 <% 
 
 String code = request.getParameter("code"); 
-response.sendRedirect("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx458a41033e38238c&secret=a3fbaed5c3c174afdb5a6e6f9e7396e2&code="+code+"&grant_type=authorization_code"); 
+response.sendRedirect("test.html"); 
 
 
 

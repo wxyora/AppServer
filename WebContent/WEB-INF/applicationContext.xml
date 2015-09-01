@@ -36,26 +36,33 @@
 		<property name="configLocation" value="classpath:sqlMapConfigMybatis.xml" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
-
+	
+    <!--用户管理  -->
 	<bean id="userInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface" value="waylon.dao.UserInfoDao" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
-	
-	
 	<bean id="userInfoService" class="waylon.service.impl.UserInfoServiceImpl">
 		 <property name="userInfoDao" ref="userInfoDao" /> 
 	</bean>
-	
 	<bean id="userInfoAction" class="waylon.action.RegisterAction">
     	 <property name = "userInfoService" ref="userInfoService" />
 	</bean>
+
 	
-	
-	<bean id="userInfoAction" class="waylon.action.RegisterAction">
-    	 <property name = "userInfoService" ref="userInfoService" />
+	<!-- 产品管理 -->
+	<bean id="productInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="waylon.dao.ProductInfoDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
+	<bean id="productInfoService" class="waylon.service.impl.ProductInfoServiceImpl">
+		 <property name="productInfoDao" ref="productInfoDao" /> 
+	</bean>
+	<bean id="productInfoAction" class="waylon.action.ProductInfoAction">
+    	 <property name = "productInfoService" ref="productInfoService" />
+	</bean>
+
+	
 
 
 

@@ -1,9 +1,11 @@
 package waylon.service;
 
+import java.util.List;
+
 import waylon.domain.ProductInfo;
 
 public interface ProductInfoService {
 	
-	public ProductInfo getAllProductInfo();
+	public List<ProductInfo> getAllProductInfo();
 
 }
