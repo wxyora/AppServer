@@ -13,8 +13,8 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/celechem" />
-		<property name="username" value="waylon" />
+		<property name="url" value="jdbc:mysql://rds3cg857mrf0515578h.mysql.rds.aliyuncs.com:3306/wxydb" />
+		<property name="username" value="wxydb" />
 		<!-- property池启动时的初始值 -->
 		<property name="password" value="wxy408922" />
 		<!-- 连接name="initialSize" value="${initialSize}"/> -->
