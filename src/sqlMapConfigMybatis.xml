@@ -6,5 +6,6 @@
     <mappers>
         <mapper resource="waylon/mapping/UserInfoDao.xml"/>  
         <mapper resource="waylon/mapping/ProductInfoDao.xml"/>  
+        <mapper resource="waylon/mapping/TokenInfoDao.xml"/>  
     </mappers>  
 </configuration>

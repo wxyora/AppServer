@@ -15,4 +15,7 @@ public interface UserInfoService{
 	
 	public int addUser(UserInfo userInfo);
 	
+	
+	
+	
 }

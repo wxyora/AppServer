@@ -1,8 +1,12 @@
 package waylon.action;
 
+import java.util.Date;
+
 import com.opensymphony.xwork2.ActionSupport;
 
+import waylon.domain.TokenInfo;
 import waylon.domain.UserInfo;
+import waylon.service.TokenInfoService;
 import waylon.service.UserInfoService;
 
 public class RegisterAction extends ActionSupport{
@@ -21,6 +25,8 @@ public class RegisterAction extends ActionSupport{
 	private String state;
 	 
 	private UserInfoService userInfoService;
+	
+	private TokenInfoService tokenInfoService;
 	
 	@Override
 	public String execute() throws Exception {
@@ -69,6 +75,18 @@ public class RegisterAction extends ActionSupport{
 			result = "0";//²»´æÔÚ
 		}else{
 			if(password.equals(userInfo.getPassword())){
+				TokenInfo tokenInfo = tokenInfoService.getTokenInfoByMobile(mobile);
+				if(tokenInfo!=null){
+					
+				}else{
+					TokenInfo tokenInfoTemp = new TokenInfo();
+					tokenInfoTemp.setMobile(mobile);
+					Date date = new Date();
+					tokenInfoTemp.setCreateDate(date.toString());
+					tokenInfoTemp.setTokenValue("sdfgadfggadfgadf");
+					tokenInfoService.addToken(tokenInfoTemp);
+				}
+				
 				result = "1";
 			}else{
 				result = "3";
@@ -143,6 +161,14 @@ public class RegisterAction extends ActionSupport{
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+	
+	public TokenInfoService getTokenInfoService() {
+		return tokenInfoService;
+	}
+
+	public void setTokenInfoService(TokenInfoService tokenInfoService) {
+		this.tokenInfoService = tokenInfoService;
 	}
 
 }
