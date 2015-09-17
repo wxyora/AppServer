@@ -64,5 +64,10 @@
 	<bean id="productInfoAction" class="waylon.action.ProductInfoAction">
 		<property name="productInfoService" ref="productInfoService" />
 	</bean>
+	
+	<!-- 微信管理 -->
+	<bean id="weChatAction" class="waylon.action.WeChatAction">
+	
+	</bean>
 
 </beans>

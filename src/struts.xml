@@ -38,6 +38,13 @@
 			</result>
 		</action>
 		
+		<action name="dealWeChat" class="weChatAction"  
+			method="dealWeChat">
+			<result  type="json">
+				
+			</result>
+		</action>
+		
 		
 	</package>
 
