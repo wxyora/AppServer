@@ -8,4 +8,6 @@ public interface TokenInfoDao {
 	
 	public int addToken(TokenInfo tokenInfo);
 	
+	public int updateTokenByMobile(TokenInfo tokenInfo);
+	
 }

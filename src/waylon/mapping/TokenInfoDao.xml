@@ -3,12 +3,27 @@
 
 <mapper namespace="waylon.dao.TokenInfoDao">
 
-    <select id="getTokenByMobile" parameterType="String" resultType="waylon.domain.TokenInfo">
-        select * from token_info where mobile = #{mobile}
-    </select>
-    
-    <insert id="addToken" parameterType="waylon.domain.TokenInfo" >
-    	insert into token_info(tokenId,tokenValue,createDate,modifyDate,mobile) values (#{tokenId},#{tokenValue},#{createDate},#{modifyDate},#{mobile})
-    </insert>
-    
+	<select id="getTokenByMobile" parameterType="String"
+		resultType="waylon.domain.TokenInfo">
+		select * from token_info where mobile = #{mobile}
+	</select>
+
+	<insert id="addToken" parameterType="waylon.domain.TokenInfo">
+		insert into
+		token_info(tokenId,tokenValue,createDate,modifyDate,mobile) values
+		(#{tokenId},#{tokenValue},#{createDate},#{modifyDate},#{mobile})
+	</insert>
+
+
+	<update id="updateTokenByMobile" parameterType="waylon.domain.TokenInfo">
+
+		update token_info t set
+		<if test="tokenValue != null">
+			t.tokenValue = #{tokenValue},
+		</if>
+		t.modifyDate = #{modifyDate}
+		where t.mobile =#{mobile}
+
+	</update>
+
 </mapper>

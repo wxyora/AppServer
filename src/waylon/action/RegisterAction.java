@@ -1,9 +1,13 @@
 package waylon.action;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.opensymphony.xwork2.ActionSupport;
 
+import net.sf.json.JSONObject;
 import waylon.domain.TokenInfo;
 import waylon.domain.UserInfo;
 import waylon.service.TokenInfoService;
@@ -19,22 +23,31 @@ public class RegisterAction extends ActionSupport{
 	private String userName;
 	private String password;
 	private String result;
+	private Map resultMap;
 	private String mobile;
+	public Map getResultMap() {
+		return resultMap;
+	}
+
+	public void setResultMap(Map resultMap) {
+		this.resultMap = resultMap;
+	}
+
 	private String FromUserName;
 	private String code;
 	private String state;
-	 
+
 	private UserInfoService userInfoService;
-	
+
 	private TokenInfoService tokenInfoService;
-	
+
 	@Override
 	public String execute() throws Exception {
 		return super.execute();
 	}
 
 	public String register() throws Exception {
-		
+
 		try {
 			UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
 			if(null == userInfo){
@@ -56,7 +69,7 @@ public class RegisterAction extends ActionSupport{
 		}
 		return SUCCESS;
 	}
-	
+
 	public String findUserByMobile(){
 		UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
 		if(userInfo ==null){
@@ -66,35 +79,42 @@ public class RegisterAction extends ActionSupport{
 		}
 		return SUCCESS;
 	}
-	
+
 	public String loginValidate(){
-		
-		String openID = FromUserName;
+
 		UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
 		if(userInfo ==null){
 			result = "0";//²»´æÔÚ
 		}else{
 			if(password.equals(userInfo.getPassword())){
 				TokenInfo tokenInfo = tokenInfoService.getTokenInfoByMobile(mobile);
+				TokenInfo tokenInfoTemp = new TokenInfo();
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+				Date date = new Date();
+				String modifyDate = simpleDateFormat.format(date);
 				if(tokenInfo!=null){
-					
-				}else{
-					TokenInfo tokenInfoTemp = new TokenInfo();
 					tokenInfoTemp.setMobile(mobile);
-					Date date = new Date();
-					tokenInfoTemp.setCreateDate(date.toString());
-					tokenInfoTemp.setTokenValue("sdfgadfggadfgadf");
+					tokenInfoTemp.setModifyDate(modifyDate);
+					tokenInfoTemp.setTokenValue(mobile+date.getTime());
+					tokenInfoService.updateTokenByMobile(tokenInfoTemp);
+				}else{
+					tokenInfoTemp.setMobile(mobile);
+					tokenInfoTemp.setCreateDate(modifyDate);
+					tokenInfoTemp.setTokenValue(mobile+date.getTime());
 					tokenInfoService.addToken(tokenInfoTemp);
 				}
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("result","1");
+				map.put("token", tokenInfoTemp.getTokenValue());
+				resultMap = map;
 				
-				result = "1";
 			}else{
 				result = "3";
 			}
 		}
 		return SUCCESS;
 	}
-	
+
 	public String getUserName() {
 		return userName;
 	}
@@ -118,7 +138,7 @@ public class RegisterAction extends ActionSupport{
 	public void setResult(String result) {
 		this.result = result;
 	}
-	
+
 	public UserInfoService getUserInfoService() {
 		return userInfoService;
 	}
@@ -126,7 +146,7 @@ public class RegisterAction extends ActionSupport{
 	public void setUserInfoService(UserInfoService userInfoService) {
 		this.userInfoService = userInfoService;
 	}
-	
+
 	public String getMobile() {
 		return mobile;
 	}
@@ -162,7 +182,7 @@ public class RegisterAction extends ActionSupport{
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
+
 	public TokenInfoService getTokenInfoService() {
 		return tokenInfoService;
 	}

@@ -14,5 +14,7 @@ public interface TokenInfoService{
 	public TokenInfo getTokenInfoByMobile(String mobile);
 	
 	public int addToken(TokenInfo tokenInfo);
+	
+	public int updateTokenByMobile(TokenInfo tokenInfo);
 
 }

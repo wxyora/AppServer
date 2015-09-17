@@ -9,26 +9,29 @@ public class TokenInfoServiceImpl implements TokenInfoService {
 	
 	private TokenInfoDao tokenInfoDao;
 
-	public TokenInfoDao getTokenInfoDao() {
-		return tokenInfoDao;
-	}
-
-	public void setTokenInfoDao(TokenInfoDao tokenInfoDao) {
-		this.tokenInfoDao = tokenInfoDao;
-	}
 
 	@Override
 	public TokenInfo getTokenInfoByMobile(String mobile) {
-		TokenInfo tokenInfo = tokenInfoDao.getTokenByMobile(mobile);
-		return tokenInfo;
+		return tokenInfoDao.getTokenByMobile(mobile);
 	}
 
 	@Override
 	public int addToken(TokenInfo tokenInfo) {
-		int addToken = tokenInfoDao.addToken(tokenInfo);
-		return addToken;
+		return tokenInfoDao.addToken(tokenInfo);
 	}
 
+	@Override
+	public int updateTokenByMobile(TokenInfo tokenInfo) {
+		return tokenInfoDao.updateTokenByMobile(tokenInfo);
+	}
+
+	public TokenInfoDao getTokenInfoDao() {
+		return tokenInfoDao;
+	}
+	
+	public void setTokenInfoDao(TokenInfoDao tokenInfoDao) {
+		this.tokenInfoDao = tokenInfoDao;
+	}
 
 
 }
