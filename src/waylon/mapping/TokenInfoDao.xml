@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="waylon.dao.TokenInfoDao">
+
+    <select id="getTokenByMobile" parameterType="String" resultType="waylon.domain.TokenInfo">
+        select * from token_info where mobile = #{mobile}
+    </select>
+    
+    <insert id="addToken" parameterType="waylon.domain.TokenInfo" >
+    	insert into token_info(tokenId,tokenValue,createDate,modifyDate,mobile) values (#{tokenId},#{tokenValue},#{createDate},#{modifyDate},#{mobile})
+    </insert>
+    
+</mapper>

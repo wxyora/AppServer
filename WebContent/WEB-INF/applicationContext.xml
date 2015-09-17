@@ -13,8 +13,8 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://rds3cg857mrf0515578h.mysql.rds.aliyuncs.com:3306/wxydb" />
-		<property name="username" value="wxydb" />
+		<property name="url" value="jdbc:mysql://localhost:3306/celechem" />
+		<property name="username" value="waylon" />
 		<!-- property池启动时的初始值 -->
 		<property name="password" value="wxy408922" />
 		<!-- 连接name="initialSize" value="${initialSize}"/> -->
@@ -36,33 +36,51 @@
 		<property name="configLocation" value="classpath:sqlMapConfigMybatis.xml" />
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-	
-    <!--用户管理  -->
+
+
+	<!-- Token管理 -->
+	<bean id="tokenInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="waylon.dao.TokenInfoDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="tokenInfoService" class="waylon.service.impl.TokenInfoServiceImpl">
+		<property name="tokenInfoDao" ref="tokenInfoDao" />
+	</bean>
+
+	<!--用户管理 -->
 	<bean id="userInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface" value="waylon.dao.UserInfoDao" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	<bean id="userInfoService" class="waylon.service.impl.UserInfoServiceImpl">
-		 <property name="userInfoDao" ref="userInfoDao" /> 
-	</bean>
-	<bean id="userInfoAction" class="waylon.action.RegisterAction">
-    	 <property name = "userInfoService" ref="userInfoService" />
+		<property name="userInfoDao" ref="userInfoDao" />
 	</bean>
 
-	
+
+
+
+	<bean id="userInfoAction" class="waylon.action.RegisterAction">
+		<property name="userInfoService" ref="userInfoService" />
+		<property name="tokenInfoService" ref="tokenInfoService" />
+	</bean>
+
+
 	<!-- 产品管理 -->
 	<bean id="productInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
 		<property name="mapperInterface" value="waylon.dao.ProductInfoDao" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 	<bean id="productInfoService" class="waylon.service.impl.ProductInfoServiceImpl">
-		 <property name="productInfoDao" ref="productInfoDao" /> 
+		<property name="productInfoDao" ref="productInfoDao" />
 	</bean>
 	<bean id="productInfoAction" class="waylon.action.ProductInfoAction">
-    	 <property name = "productInfoService" ref="productInfoService" />
+		<property name="productInfoService" ref="productInfoService" />
 	</bean>
 
-	
+
+	<!-- <bean id="userInfoAction" class="waylon.action.RegisterAction"> <property 
+		name="tokenInfoService" ref="tokenInfoService" /> </bean> -->
+
 
 
 
