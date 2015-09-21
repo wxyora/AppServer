@@ -4,9 +4,21 @@ public class WeChatUserInfo {
 	
 	private  String openId;
 	
+	private String userName;
+	
 	private String nickname;
 	
 	private String mobile;
+	
+	
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 
 	public String getOpenId() {
 		return openId;

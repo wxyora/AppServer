@@ -6,15 +6,11 @@ import java.util.Date;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.struts2.ServletActionContext;
 import org.json.JSONObject;
-
 import com.opensymphony.xwork2.ActionSupport;
-
 import waylon.domain.WeChatUserInfo;
 import waylon.util.HttpRequestUtil;
 import waylon.util.MessageUtil;
@@ -51,22 +47,29 @@ public class WeChatAction extends ActionSupport {
 			out.print(echostr);
 		}
 
-		// 调用parseXml方法解析请求消息
+		//调用parseXml方法解析请求消息
 		Map<String, String> requestMap = MessageUtil.parseXml(request);
 		String fromUserName = requestMap.get("FromUserName");  
 		String toUserName = requestMap.get("ToUserName");  
 		String msgType = requestMap.get("MsgType");  
 		String content = requestMap.get("Content");  
+		String mobile = "";
+		String userName ="";
 		// 回复文本消息  
 		TextMessage textMessage = new TextMessage();  
 		textMessage.setToUserName(fromUserName);  
 		textMessage.setFromUserName(toUserName);  
 		textMessage.setCreateTime(new Date().getTime());  
 		textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);  
-
 		// 文本消息  
-		if (MessageUtil.RESP_MESSAGE_TYPE_TEXT.equals(msgType)) {  
-			if(isMobile(content)){
+		if (MessageUtil.RESP_MESSAGE_TYPE_TEXT.equals(msgType)) { 
+			//处理用户输入信息
+			String[] userinfo = content.split("#");
+			if(userinfo!=null &&userinfo.length>1){
+				mobile = userinfo[0].trim();
+				userName = userinfo[1].trim();
+			}
+			if(isMobile(mobile) && !userName.isEmpty()){
 				String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
 				String user_info_url ="https://api.weixin.qq.com/cgi-bin/user/info";
 				//获取access_token
@@ -83,14 +86,15 @@ public class WeChatAction extends ActionSupport {
 					weChatUserInfo.setOpenId(fromUserName);
 					weChatUserInfo.setNickname(nickname);
 					weChatUserInfo.setMobile(content);
+					weChatUserInfo.setUserName(userName);
 				}
 				//调用接口存储数据，并判断用户是否已经参与过，如果参与过，提示用户等待开奖
 				//TODO 调用service
-				
+
 				//如果没有参与过
-				respContent = "感谢手机号："+content+"\n参加活动！";  
+				respContent = userName+",您已成功参与抽奖活动,谢谢参与！";  
 			}else{
-				respContent = "您输入的内容为："+content;  
+				respContent = "您输入的内容为："+content+" 请检查格式是否符合15966666666#张三";  
 			}
 		}  
 		if(msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_EVENT)){
@@ -131,8 +135,6 @@ public class WeChatAction extends ActionSupport {
 		b = m.matches();   
 		return b;  
 	}  
-
-
 
 	public String getSignature() {
 		return signature;
