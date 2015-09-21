@@ -1,4 +1,4 @@
-package waylon.util;
+package waylon.wechat;
 
 import java.util.Date;
 import java.util.Map;

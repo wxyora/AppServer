@@ -2,7 +2,9 @@ package waylon.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,9 +15,11 @@ import org.json.JSONObject;
 import com.opensymphony.xwork2.ActionSupport;
 import waylon.domain.WeChatUserInfo;
 import waylon.util.HttpRequestUtil;
-import waylon.util.MessageUtil;
-import waylon.util.SignUtil;
-import waylon.util.TextMessage;
+import waylon.wechat.Article;
+import waylon.wechat.MessageUtil;
+import waylon.wechat.NewsMessage;
+import waylon.wechat.SignUtil;
+import waylon.wechat.TextMessage;
 
 public class WeChatAction extends ActionSupport {
 
@@ -96,6 +100,13 @@ public class WeChatAction extends ActionSupport {
 			}else{
 				respContent = "您输入的内容为："+content+" 请检查格式是否符合15966666666#张三";  
 			}
+			
+			// 设置文本消息的内容  
+			textMessage.setContent(respContent);  
+			// 将文本消息对象转换成xml  
+			respXml = MessageUtil.textMessageToXml(textMessage);  
+			// 响应消息  
+			out.print(respXml); 
 		}  
 		if(msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_EVENT)){
 			String event = requestMap.get("Event"); 
@@ -103,6 +114,33 @@ public class WeChatAction extends ActionSupport {
 			if(MessageUtil.EVENT_TYPE_CLICK.equals(event)){
 				if("apply_meterial".equals(eventKey)){
 					respContent ="apply_meterial";  
+					List<Article> articleList = new ArrayList<Article>();  
+					NewsMessage newsMessage = new NewsMessage();  
+					newsMessage.setToUserName(fromUserName);  
+					newsMessage.setFromUserName(toUserName);  
+					newsMessage.setCreateTime(new Date().getTime());  
+					newsMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_NEWS);  
+
+					Article article = new Article();  
+					article.setTitle("微信公众帐号开发教程Java版");  
+					article.setDescription("柳峰，80后，微信公众帐号开发经验4个月。为帮助初学者入门，特推出此系列教程，也希望借此机会认识更多同行！");  
+					article.setPicUrl("http://www.qqai.net/fa/UploadPic/2012-7/20127417475611762.jpg");  
+					article.setUrl("http://blog.csdn.net/lyq8479");  
+					articleList.add(article);  
+					// 设置图文消息个数  
+					newsMessage.setArticleCount(articleList.size());  
+					// 设置图文消息包含的图文集合  
+					newsMessage.setArticles(articleList);  
+					// 将图文消息对象转换成xml字符串  
+					String respMessage = MessageUtil.newsMessageToXml(newsMessage);  
+					
+					// 设置文本消息的内容  
+					textMessage.setContent(respMessage);  
+					// 将文本消息对象转换成xml  
+					respXml = MessageUtil.textMessageToXml(textMessage);  
+					// 响应消息  
+					out.print(respXml); 
+
 				}else if("common_question".equals(eventKey)){
 					respContent ="common_question";  
 				}else if("company_brief".equals(eventKey)){
@@ -116,12 +154,7 @@ public class WeChatAction extends ActionSupport {
 				}
 			}
 		}
-		// 设置文本消息的内容  
-		textMessage.setContent(respContent);  
-		// 将文本消息对象转换成xml  
-		respXml = MessageUtil.textMessageToXml(textMessage);  
-		// 响应消息  
-		out.print(respXml);  
+		 
 		out.close();  
 		return SUCCESS;
 	}

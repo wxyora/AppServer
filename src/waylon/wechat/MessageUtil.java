@@ -1,4 +1,4 @@
-package waylon.util;
+package waylon.wechat;
 
 
 import java.io.InputStream;
@@ -127,6 +127,19 @@ public class MessageUtil {
 		xstream.alias("xml", textMessage.getClass());
 		return xstream.toXML(textMessage);
 	}
+	
+	/** 
+     * 图文消息对象转换成xml 
+     *  
+     * @param newsMessage 图文消息对象 
+     * @return xml 
+     */  
+    public static String newsMessageToXml(NewsMessage newsMessage) {  
+        xstream.alias("xml", newsMessage.getClass());  
+        xstream.alias("item", new Article().getClass());  
+        return xstream.toXML(newsMessage);  
+    }  
+  
 
 	/**
 	 * 扩展xstream，使其支持CDATA块
