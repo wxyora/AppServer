@@ -37,10 +37,10 @@ public class AccessFilter implements Filter {
 		}else if(token == null){
 			//response.sendRedirect("/loginValidate.action");
 			System.out.println(requestURI);
-			return;
+			//return;
 		}else{
 			System.out.println("the value of token is:"+token);
-			arg2.doFilter(arg0, arg1);
+			//arg2.doFilter(arg0, arg1);
 		}
 		
 		arg2.doFilter(arg0, arg1);
