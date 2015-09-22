@@ -1,4 +1,4 @@
-package waylon.util;
+package waylon.wechat;
 
 import java.io.BufferedReader;
 import java.io.IOException;

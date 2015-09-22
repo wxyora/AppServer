@@ -9,8 +9,10 @@ public class Article {
     private String PicUrl;  
     // 点击图文消息跳转链接  
     private String Url;  
-  
-    public String getTitle() {  
+    //图文消息的具体内容，支持HTML标签，必须少于2万字符，小于1M，且此处会去除JS
+    private String Content;
+    
+	public String getTitle() {  
         return Title;  
     }  
   
@@ -38,7 +40,17 @@ public class Article {
         return null == Url ? "" : Url;  
     }  
   
-    public void setUrl(String url) {  
+    public String getContent() {
+		return Content;
+	}
+
+	public void setContent(String content) {
+		Content = content;
+	}
+
+	public void setUrl(String url) {  
         Url = url;  
     }  
+    
+
 }
