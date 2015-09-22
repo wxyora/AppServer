@@ -46,12 +46,12 @@ public class WeChatAction extends ActionSupport {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// Í¨¹ı¼ìÑésignature¶ÔÇëÇó½øĞĞĞ£Ñé£¬ÈôĞ£Ñé³É¹¦ÔòÔ­Ñù·µ»Øechostr£¬±íÊ¾½ÓÈë³É¹¦£¬·ñÔò½ÓÈëÊ§°Ü
+		// é€šè¿‡æ£€éªŒsignatureå¯¹è¯·æ±‚è¿›è¡Œæ ¡éªŒï¼Œè‹¥æ ¡éªŒæˆåŠŸåˆ™åŸæ ·è¿”å›echostrï¼Œè¡¨ç¤ºæ¥å…¥æˆåŠŸï¼Œå¦åˆ™æ¥å…¥å¤±è´¥
 		if (SignUtil.checkSignature(signature, timestamp, nonce)) {
 			out.print(echostr);
 		}
 
-		//µ÷ÓÃparseXml·½·¨½âÎöÇëÇóÏûÏ¢
+		//è°ƒç”¨parseXmlæ–¹æ³•è§£æè¯·æ±‚æ¶ˆæ¯
 		Map<String, String> requestMap = MessageUtil.parseXml(request);
 		String fromUserName = requestMap.get("FromUserName");  
 		String toUserName = requestMap.get("ToUserName");  
@@ -59,29 +59,37 @@ public class WeChatAction extends ActionSupport {
 		String content = requestMap.get("Content");  
 		String mobile = "";
 		String userName ="";
-		// »Ø¸´ÎÄ±¾ÏûÏ¢  
+		// å›å¤æ–‡æœ¬æ¶ˆæ¯  
 		TextMessage textMessage = new TextMessage();  
 		textMessage.setToUserName(fromUserName);  
 		textMessage.setFromUserName(toUserName);  
 		textMessage.setCreateTime(new Date().getTime());  
-		textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);  
-		// ÎÄ±¾ÏûÏ¢  
+		textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
+		
+		NewsMessage newsMessage = new NewsMessage();  
+		newsMessage.setToUserName(fromUserName);  
+		newsMessage.setFromUserName(toUserName);  
+		newsMessage.setCreateTime(new Date().getTime());  
+		newsMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_NEWS); 
+		
+		// æ–‡æœ¬æ¶ˆæ¯  
 		if (MessageUtil.RESP_MESSAGE_TYPE_TEXT.equals(msgType)) { 
-			//´¦ÀíÓÃ»§ÊäÈëĞÅÏ¢
+			//å¤„ç†ç”¨æˆ·è¾“å…¥ä¿¡æ¯
 			String[] userinfo = content.split("#");
 			if(userinfo!=null &&userinfo.length>1){
 				mobile = userinfo[0].trim();
 				userName = userinfo[1].trim();
 			}
+			//å¤„ç†æŠ½å¥–
 			if(isMobile(mobile) && !userName.isEmpty()){
 				String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
 				String user_info_url ="https://api.weixin.qq.com/cgi-bin/user/info";
-				//»ñÈ¡access_token
+				//è·å–access_token
 				String access_token_info = HttpRequestUtil.sendGet(access_token_url,"grant_type=client_credential&appid="+appid+"&secret="+secret);
 				JSONObject jsonObject = new JSONObject(access_token_info);
 				String access_token = jsonObject.getString("access_token");
 
-				//»ñÈ¡ÓÃ»§ĞÅÏ¢£¨êÇ³Æ£©
+				//è·å–ç”¨æˆ·ä¿¡æ¯ï¼ˆæ˜µç§°ï¼‰
 				String user_info = HttpRequestUtil.sendGet(user_info_url, "access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN");
 				JSONObject user_info_json = new JSONObject(user_info);
 				String nickname = "";
@@ -93,36 +101,60 @@ public class WeChatAction extends ActionSupport {
 					weChatUserInfo.setMobile(content);
 					weChatUserInfo.setUserName(userName);
 				}
-				//µ÷ÓÃ½Ó¿Ú´æ´¢Êı¾İ£¬²¢ÅĞ¶ÏÓÃ»§ÊÇ·ñÒÑ¾­²ÎÓë¹ı£¬Èç¹û²ÎÓë¹ı£¬ÌáÊ¾ÓÃ»§µÈ´ı¿ª½±
-				//TODO µ÷ÓÃservice
+				//è°ƒç”¨æ¥å£å­˜å‚¨æ•°æ®ï¼Œå¹¶åˆ¤æ–­ç”¨æˆ·æ˜¯å¦å·²ç»å‚ä¸è¿‡ï¼Œå¦‚æœå‚ä¸è¿‡ï¼Œæç¤ºç”¨æˆ·ç­‰å¾…å¼€å¥–
+				//TODO è°ƒç”¨service
 
-				//Èç¹ûÃ»ÓĞ²ÎÓë¹ı
-				respContent = userName+",ÄúÒÑ³É¹¦²ÎÓë³é½±»î¶¯,Ğ»Ğ»²ÎÓë£¡";  
+				//å¦‚æœæ²¡æœ‰å‚ä¸è¿‡
+				respContent = userName+",æ‚¨å·²æˆåŠŸå‚ä¸æŠ½å¥–æ´»åŠ¨,è°¢è°¢å‚ä¸ï¼";  
+			}else if(content.contains("è´·æ¬¾")||content.contains("å€Ÿé’±")||content.contains("ç”³è¯·è´·æ¬¾")||content.contains("æˆ‘è¦è´·æ¬¾")||content.contains("è´·æ¬¾ç”³è¯·")||content.contains("è´­ç‰©è´·æ¬¾")||content.contains("å©šåº†è´·æ¬¾")||content.contains("æ•™è‚²è´·æ¬¾")||content.contains("æ—…æ¸¸è´·æ¬¾")||content.contains("	 æˆ¿å±‹è£…ä¿®è´·æ¬¾")){//å¤„ç†è§„åˆ™1 
+				respContent = "ä¸ç”¨æ€¥~ä¹èæ¥å¸®æ‚¨ï¼æ‚¨å¯ä»¥ç‚¹å‡»åº•éƒ¨èœå•â€œè´·æ¬¾ç”³è¯·â€æˆ–ç‚¹å‡»è¿™ä¸ªé“¾æ¥https://www.happyfi.com/borrow/yxcommon.html?channel=weixin_mainè½»æ¾å®ç°è´·æ¬¾ã€‚è½»æ¾å¡«èµ„æ–™ï¼Œå¿«ä¹æ‹¿è´·æ¬¾ï¼ç½‘è´­ä¸å‰æ‰‹ï¼Œåç‰Œéšå¿ƒè´­ã€‚ä¹èè´·æ¬¾-æ‚¨çš„ç§»åŠ¨ATMï¼â€‹";  
+			}else if(content.contains("å…¬å¸")||content.contains("å…¬å¸ç®€ä»‹")||content.contains("å…¬å¸ä»‹ç»")||content.contains("ä»‹ç»")||content.contains("ä¹è")||content.contains("HAPPYFI")||content.contains("happyfi")||content.contains("ä¹èè´·æ¬¾")||content.contains("ä¸Šæµ·ä¹è")||content.contains("ç®€ä»‹")){//å¤„ç†è§„åˆ™2 
+				List<Article> articleList = new ArrayList<Article>();  
+				Article article = new Article();  
+				article.setTitle("å…¬å¸ç®€ä»‹");  
+				article.setDescription("ä¸Šæµ·ä¹èé‡‘èä¿¡æ¯æœåŠ¡æœ‰é™å…¬å¸æ˜¯ä½äºä¸Šæµ·é™†å®¶å˜´çš„äº’è”ç½‘é‡‘èå…¬å¸.å…¬å¸å·²ç»è·å¾—ä¸–ç•Œè‘—åçš„é£é™©æŠ•èµ„åŸºé‡‘çš„èµ„é‡‘æ”¯æŒã€‚");  
+				String requestUrl = request.getRequestURL().toString();
+				int indexOf = requestUrl.indexOf("dealWeChat");
+				String imgUrl = requestUrl.substring(0, indexOf)+"image/company_brief.jpg";
+				article.setPicUrl(imgUrl);  
+				article.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTAwNTg0Nw==&mid=200405794&idx=1&sn=d5a768b009bf230e445c9ad9fe0bfd59&scene=18#rd");  
+				articleList.add(article);  
+				newsMessage.setArticleCount(articleList.size());  
+				newsMessage.setArticles(articleList);  
+				String respMessage = MessageUtil.newsMessageToXml(newsMessage);  
+				out.print(respMessage); 
 			}else{
-				respContent = "ÄúÊäÈëµÄÄÚÈİÎª£º"+content+" Çë¼ì²é¸ñÊ½ÊÇ·ñ·ûºÏ15966666666#ÕÅÈı";  
+				respContent = "è´­ç‰©ã€å©šåº†ã€æ•™è‚²ã€æ—…æ¸¸ã€æˆ¿å±‹è£…ä¿®~mo-å¤§å…µå„ç§è´·æ¬¾ï¼Œä¸€ç«™å¼è§£å†³ï¼\tmo-å¤ªé˜³å›å¤â€œè´·æ¬¾ç”³è¯·â€ã€â€œ è´·æ¬¾ç®€ä»‹â€ã€â€œ ç”³è¯·ææ–™â€è·å–æ‚¨æƒ³äº†è§£çš„ä¿¡æ¯ã€‚\t ä¸€åˆ†é’Ÿé¢„å®¡ï¼Œæ­£è§„è´·æ¬¾ï¼è´·æ¬¾å°±æ˜¯So easyï¼mo-ç¤ºçˆ±å¦ˆå¦ˆå†ä¹Ÿä¸ç”¨æ‹…å¿ƒæˆ‘çš„é›¶èŠ±é’±äº†ã€‚\t mo-æ‹¥æŠ±å®¢æœç”µè¯ï¼š021-58780023";  
 			}
 
-			// ÉèÖÃÎÄ±¾ÏûÏ¢µÄÄÚÈİ  
+			// è®¾ç½®æ–‡æœ¬æ¶ˆæ¯çš„å†…å®¹  
 			textMessage.setContent(respContent);  
-			// ½«ÎÄ±¾ÏûÏ¢¶ÔÏó×ª»»³Éxml  
+			// å°†æ–‡æœ¬æ¶ˆæ¯å¯¹è±¡è½¬æ¢æˆxml  
 			respXml = MessageUtil.textMessageToXml(textMessage);  
-			// ÏìÓ¦ÏûÏ¢  
+			// å“åº”æ¶ˆæ¯  
 			out.print(respXml); 
-		}  
+		} 
+
+		//äº‹ä»¶å¤„ç†
 		if(msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_EVENT)){
 			String event = requestMap.get("Event"); 
 			String eventKey = requestMap.get("EventKey"); 
+			if (MessageUtil.EVENT_TYPE_SUBSCRIBE.equals(event)) { 
+				respContent = "\ue057ç«ç‘°mo-å¯çˆ±å“Ÿ~æ‚¨ç»ˆäºå…³æ³¨ä¹èå•¦~ï¼Œä¹èç­‰æ‚¨å¾ˆä¹…äº†å‘¢ï¼\nè´­ç‰©ã€å©šåº†ã€æ•™è‚²ã€æ—…æ¸¸ã€æˆ¿å±‹è£…ä¿®~mo-å¤§å…µå„ç§è´·æ¬¾ï¼Œä¸€ç«™å¼è§£å†³ï¼å¿ƒåŠ¨äº†å§ï¼\t ä¸€åˆ†é’Ÿé¢„å®¡ï¼Œæ­£è§„è´·æ¬¾ï¼è´·æ¬¾å°±æ˜¯So easyï¼mo-ç¤ºçˆ±å¦ˆå¦ˆå†ä¹Ÿä¸ç”¨æ‹…å¿ƒæˆ‘çš„é›¶èŠ±é’±äº†ã€‚\t mo-å¤ªé˜³å›å¤â€œè´·æ¬¾ç”³è¯·â€ã€â€œ è´·æ¬¾ç®€ä»‹â€ã€â€œ ç”³è¯·ææ–™â€è·å–æ‚¨æƒ³äº†è§£çš„ä¿¡æ¯ã€‚\t mo-æ‹¥æŠ±å®¢æœç”µè¯ï¼š021-58780023";
+				// è®¾ç½®æ–‡æœ¬æ¶ˆæ¯çš„å†…å®¹  
+				textMessage.setContent(respContent);  
+				// å°†æ–‡æœ¬æ¶ˆæ¯å¯¹è±¡è½¬æ¢æˆxml  
+				respXml = MessageUtil.textMessageToXml(textMessage);  
+				// å“åº”æ¶ˆæ¯  
+				out.print(respXml); 
+			}
 			if(MessageUtil.EVENT_TYPE_CLICK.equals(event)){
-				NewsMessage newsMessage = new NewsMessage();  
-				newsMessage.setToUserName(fromUserName);  
-				newsMessage.setFromUserName(toUserName);  
-				newsMessage.setCreateTime(new Date().getTime());  
-				newsMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_NEWS); 
+				
 				if("apply_meterial".equals(eventKey)){
 					List<Article> articleList = new ArrayList<Article>();  
 					Article article = new Article();  
-					article.setTitle("ÉêÇë²ÄÁÏ");  
-					article.setDescription("ÇáËÉÉÏ´«ÉêÇë²ÄÁÏ£¬Ò»·ÖÖÓÔ¤Éó£¬´û¿î¿ìÀÖÊµÏÖ");  
+					article.setTitle("ç”³è¯·ææ–™");  
+					article.setDescription("è½»æ¾ä¸Šä¼ ç”³è¯·ææ–™ï¼Œä¸€åˆ†é’Ÿé¢„å®¡ï¼Œè´·æ¬¾å¿«ä¹å®ç°");  
 					String requestUrl = request.getRequestURL().toString();
 					int indexOf = requestUrl.indexOf("dealWeChat");
 					String imgUrl = requestUrl.substring(0, indexOf)+"image/apply_meterial.jpg";
@@ -137,8 +169,8 @@ public class WeChatAction extends ActionSupport {
 				}else if("common_question".equals(eventKey)){
 					List<Article> articleList = new ArrayList<Article>();  
 					Article article = new Article();  
-					article.setTitle("³£¼ûÎÊÌâ");  
-					article.setDescription("Èç¹ûÄúÓĞÈÎºÎÒÉÎÊ¡¢½¨Òé»òÒâ¼û£¬»¶Ó­Î¢ĞÅÁôÑÔ»ò×ÉÑ¯¹«Ë¾µç»°£º021-58780023¡£");  
+					article.setTitle("å¸¸è§é—®é¢˜");  
+					article.setDescription("å¦‚æœæ‚¨æœ‰ä»»ä½•ç–‘é—®ã€å»ºè®®æˆ–æ„è§ï¼Œæ¬¢è¿å¾®ä¿¡ç•™è¨€æˆ–å’¨è¯¢å…¬å¸ç”µè¯ï¼š021-58780023ã€‚");  
 					String requestUrl = request.getRequestURL().toString();
 					int indexOf = requestUrl.indexOf("dealWeChat");
 					String imgUrl = requestUrl.substring(0, indexOf)+"image/common_question.jpg";
@@ -152,8 +184,8 @@ public class WeChatAction extends ActionSupport {
 				}else if("company_brief".equals(eventKey)){
 					List<Article> articleList = new ArrayList<Article>();  
 					Article article = new Article();  
-					article.setTitle("¹«Ë¾¼ò½é");  
-					article.setDescription("ÉÏº£ÀÖÈÚ½ğÈÚĞÅÏ¢·şÎñÓĞÏŞ¹«Ë¾ÊÇÎ»ÓÚÉÏº£Â½¼Ò×ìµÄ»¥ÁªÍø½ğÈÚ¹«Ë¾.¹«Ë¾ÒÑ¾­»ñµÃÊÀ½çÖøÃûµÄ·çÏÕÍ¶×Ê»ù½ğµÄ×Ê½ğÖ§³Ö¡£");  
+					article.setTitle("å…¬å¸ç®€ä»‹");  
+					article.setDescription("ä¸Šæµ·ä¹èé‡‘èä¿¡æ¯æœåŠ¡æœ‰é™å…¬å¸æ˜¯ä½äºä¸Šæµ·é™†å®¶å˜´çš„äº’è”ç½‘é‡‘èå…¬å¸.å…¬å¸å·²ç»è·å¾—ä¸–ç•Œè‘—åçš„é£é™©æŠ•èµ„åŸºé‡‘çš„èµ„é‡‘æ”¯æŒã€‚");  
 					String requestUrl = request.getRequestURL().toString();
 					int indexOf = requestUrl.indexOf("dealWeChat");
 					String imgUrl = requestUrl.substring(0, indexOf)+"image/company_brief.jpg";
@@ -168,8 +200,8 @@ public class WeChatAction extends ActionSupport {
 				else if("contact_us".equals(eventKey)){
 					List<Article> articleList = new ArrayList<Article>();  
 					Article article = new Article();  
-					article.setTitle("ÁªÏµÎÒÃÇ");  
-					article.setDescription("Èç¹ûÄúÓĞÈÎºÎÒÉÎÊ£¬»¶Ó­Î¢ĞÅÁôÑÔ»òÖ±½ÓÖÂµç021-58780023¡£");  
+					article.setTitle("è”ç³»æˆ‘ä»¬");  
+					article.setDescription("å¦‚æœæ‚¨æœ‰ä»»ä½•ç–‘é—®ï¼Œæ¬¢è¿å¾®ä¿¡ç•™è¨€æˆ–ç›´æ¥è‡´ç”µ021-58780023ã€‚");  
 					String requestUrl = request.getRequestURL().toString();
 					int indexOf = requestUrl.indexOf("dealWeChat");
 					String imgUrl = requestUrl.substring(0, indexOf)+"image/contact_us.jpg";
@@ -184,7 +216,7 @@ public class WeChatAction extends ActionSupport {
 				else if("happy_enjoy".equals(eventKey)){
 					List<Article> articleList = new ArrayList<Article>();  
 					Article article1 = new Article(); 
-					//article1.setDescription("×î¸ß·Å´û500000 Áãµ£±£ÎŞµÖÑº ´û¿îºÃÇáËÉ");  
+					//article1.setDescription("æœ€é«˜æ”¾è´·500000 é›¶æ‹…ä¿æ— æŠµæŠ¼ è´·æ¬¾å¥½è½»æ¾");  
 					String requestUrl = request.getRequestURL().toString();
 					int indexOf = requestUrl.indexOf("dealWeChat");
 					String imgUrl = requestUrl.substring(0, indexOf)+"image/happy_enjoy.jpg";
@@ -192,7 +224,7 @@ public class WeChatAction extends ActionSupport {
 					article1.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTAwNTg0Nw==&mid=206690162&idx=1&sn=3bafd54413781155e807b9a42d3d8b90&scene=18#rd");  
 
 					Article article2 = new Article();  
-					article2.setTitle("ÈÃ99%µÄÈË¿´¶®×Ô¼ºµÄÕ÷ĞÅ±¨¸æ£¡");  
+					article2.setTitle("è®©99%çš„äººçœ‹æ‡‚è‡ªå·±çš„å¾ä¿¡æŠ¥å‘Šï¼");  
 					String requestUrl2 = request.getRequestURL().toString();
 					int indexOf2 = requestUrl2.indexOf("dealWeChat");
 					String imgUrl2 = requestUrl2.substring(0, indexOf2)+"image/1.jpg";
@@ -200,7 +232,7 @@ public class WeChatAction extends ActionSupport {
 					article2.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTAwNTg0Nw==&mid=206690162&idx=2&sn=e6d28846314ce86e3a276675467d26cc&scene=18#rd"); 
 
 					Article article3 = new Article();  
-					article3.setTitle("ÌÚÑ¶80Ò³ÖØ°õ±¨¸æ£ºÄÄĞ©ĞĞÒµ½«±»µß¸²!");  
+					article3.setTitle("è…¾è®¯80é¡µé‡ç£…æŠ¥å‘Šï¼šå“ªäº›è¡Œä¸šå°†è¢«é¢ è¦†!");  
 					String requestUrl3 = request.getRequestURL().toString();
 					int indexOf3 = requestUrl3.indexOf("dealWeChat");
 					String imgUrl3 = requestUrl3.substring(0, indexOf3)+"image/2.jpg";
@@ -208,15 +240,15 @@ public class WeChatAction extends ActionSupport {
 					article3.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTAwNTg0Nw==&mid=206690162&idx=3&sn=45fbb33a40cfb579b6628e533df16bc9&scene=18#rd"); 
 
 					Article article4 = new Article();  
-					article4.setTitle("ÓĞµÄÈË25Ëê¾ÍËÀÁË£¬75Ëê²ÅÂñÔá");  
+					article4.setTitle("æœ‰çš„äºº25å²å°±æ­»äº†ï¼Œ75å²æ‰åŸ‹è‘¬");  
 					String requestUrl4 = request.getRequestURL().toString();
 					int indexOf4 = requestUrl4.indexOf("dealWeChat");
 					String imgUrl4 = requestUrl4.substring(0, indexOf4)+"image/3.jpg";
 					article4.setPicUrl(imgUrl4);  
 					article4.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTAwNTg0Nw==&mid=206690162&idx=4&sn=b35f7071340c0c8fc80efbee050fffb3&scene=18#rd"); 
-					
+
 					Article article5 = new Article();  
-					article5.setTitle("8·ÖÖÓÕğº³È«Çò£ºÎÒÃÇÉí´¦µÄ»ÑÑÔÊÀ½ç£¡");  
+					article5.setTitle("8åˆ†é’Ÿéœ‡æ’¼å…¨çƒï¼šæˆ‘ä»¬èº«å¤„çš„è°è¨€ä¸–ç•Œï¼");  
 					String requestUrl5 = request.getRequestURL().toString();
 					int indexOf5 = requestUrl5.indexOf("dealWeChat");
 					String imgUrl5 = requestUrl5.substring(0, indexOf5)+"image/4.jpg";
@@ -227,7 +259,7 @@ public class WeChatAction extends ActionSupport {
 					articleList.add(article3);  
 					articleList.add(article4);  
 					articleList.add(article5);  
-					
+
 					newsMessage.setArticleCount(articleList.size());  
 					newsMessage.setArticles(articleList);  
 					String respMessage = MessageUtil.newsMessageToXml(newsMessage);  
@@ -244,7 +276,7 @@ public class WeChatAction extends ActionSupport {
 		Pattern p = null;  
 		Matcher m = null;  
 		boolean b = false;   
-		p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$"); // ÑéÖ¤ÊÖ»úºÅ  
+		p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$"); // éªŒè¯æ‰‹æœºå·  
 		m = p.matcher(str);  
 		b = m.matches();   
 		return b;  
