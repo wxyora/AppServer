@@ -123,10 +123,46 @@ public class WeChatAction extends ActionSupport {
 				newsMessage.setArticles(articleList);  
 				String respMessage = MessageUtil.newsMessageToXml(newsMessage);  
 				out.print(respMessage); 
+			}else if(content.contains("问题")||content.contains("怎样申请贷款")||content.contains("如何申请贷款")||content.contains("怎么申请贷款")||content.contains("贷款怎么申请")||content.contains("利率")||content.contains("我可以贷多少钱")||content.contains("利息")){//处理规则3
+				List<Article> articleList = new ArrayList<Article>();  
+				Article article = new Article();  
+				article.setTitle("常见问题");  
+				article.setDescription("如果您有任何疑问、建议或意见，欢迎微信留言或咨询公司电话：021-58780023。");  
+				String requestUrl = request.getRequestURL().toString();
+				int indexOf = requestUrl.indexOf("dealWeChat");
+				String imgUrl = requestUrl.substring(0, indexOf)+"image/common_question.jpg";
+				article.setPicUrl(imgUrl);  
+				article.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTAwNTg0Nw==&mid=205108839&idx=1&sn=e613af5f0ca7c052748dfb954b9977e5&scene=18#rd");  
+				articleList.add(article);  
+				newsMessage.setArticleCount(articleList.size());  
+				newsMessage.setArticles(articleList);  
+				String respMessage = MessageUtil.newsMessageToXml(newsMessage);  
+				out.print(respMessage); 
+			}else if(content.contains("申请材料")||content.contains("材料")||content.contains("照片")||content.contains("贷款资料")||content.contains("贷款要哪些材料")||content.contains("贷款需要什么材料")||content.contains("贷款需要哪些材料")||content.contains("提交材料")||content.contains("提交资料")||content.contains(" 贷款准备")){//处理规则4
+				List<Article> articleList = new ArrayList<Article>();  
+				Article article = new Article();  
+				article.setTitle("申请材料");  
+				article.setDescription("轻松上传申请材料，一分钟预审，贷款快乐实现");  
+				String requestUrl = request.getRequestURL().toString();
+				int indexOf = requestUrl.indexOf("dealWeChat");
+				String imgUrl = requestUrl.substring(0, indexOf)+"image/apply_meterial.jpg";
+				article.setPicUrl(imgUrl);  
+				article.setUrl("http://mp.weixin.qq.com/s?__biz=MzAxNTAwNTg0Nw==&mid=200407327&idx=1&sn=f07fd55cee860b0e235522cbefff6476&scene=18#rd");  
+				articleList.add(article);  
+				newsMessage.setArticleCount(articleList.size());  
+				newsMessage.setArticles(articleList);  
+				String respMessage = MessageUtil.newsMessageToXml(newsMessage);  
+				out.print(respMessage); 
+			}else if(content.contains("？")||content.contains("hi")||content.contains("你好")||content.contains("hello")||content.contains("有人吗")||content.contains("有人在吗")||content.contains("联系方式")||content.contains("电话")||content.contains("地址")){//处理规则5
+				respContent = "需要乐融帮忙了吧！您可以点击底部菜单“贷款申请”或点击这个链接https://www.happyfi.com/borrow/yxcommon.html?channel=weixin_main轻松实现贷款。轻松填资料，快乐拿贷款！网购不剁手，名牌随心购。乐融贷款-您的移动ATM！​";  
+			}else if(content.contains("1")||content.contains("2")||content.contains("3")||content.contains("4")||content.contains("5")||content.contains("6")||content.contains("7")||content.contains("8")||content.contains("9")||content.contains("0")){//处理规则6
+				respContent = "需要乐融帮忙了吧！您可以点击底部菜单“贷款申请”或点击这个链接https://www.happyfi.com/borrow/yxcommon.html?channel=weixin_main轻松实现贷款。轻松填资料，快乐拿贷款！网购不剁手，名牌随心购。乐融贷款-您的移动ATM！​";  
+			}
+			else if(content.contains("查询")||content.contains("进度查询")||content.contains("贷款进度查询")||content.contains("贷款结果")||content.contains("忘记密码")||content.contains("密码")){//处理规则7
+				respContent = "需要乐融帮忙了吧！您可以点击底部菜单“贷款申请”或点击这个链接https://www.happyfi.com/borrow/yxcommon.html?channel=weixin_main轻松实现贷款。轻松填资料，快乐拿贷款！网购不剁手，名牌随心购。乐融贷款-您的移动ATM！​";  
 			}else{
 				respContent = "购物、婚庆、教育、旅游、房屋装修~mo-大兵各种贷款，一站式解决！\tmo-太阳回复“贷款申请”、“ 贷款简介”、“ 申请材料”获取您想了解的信息。\t 一分钟预审，正规贷款！贷款就是So easy！mo-示爱妈妈再也不用担心我的零花钱了。\t mo-拥抱客服电话：021-58780023";  
 			}
-
 			// 设置文本消息的内容  
 			textMessage.setContent(respContent);  
 			// 将文本消息对象转换成xml  
