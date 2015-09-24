@@ -45,6 +45,14 @@
 			</result>
 		</action>
 		
+		<action name="getUserInfo" class="weChatAction"  
+			method="getUserInfo">
+			<result  type="json">
+				
+			</result>
+		</action>
+		
+		
 		
 	</package>
 

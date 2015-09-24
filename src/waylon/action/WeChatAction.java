@@ -2,6 +2,8 @@ package waylon.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
+import org.json.JSONException;
 import org.json.JSONObject;
 import com.opensymphony.xwork2.ActionSupport;
 import waylon.domain.WeChatUserInfo;
@@ -31,9 +34,55 @@ public class WeChatAction extends ActionSupport {
 	private String timestamp;
 	private String nonce;
 	private String echostr;
-	private static final String appid = "wx55ccb70d4c7330aa";
-	private static final String secret = "781e0684cedd7aafb609adb7d6d6e1d0";
+	//test account
 
+	//private static final String appid = "wx55ccb70d4c7330aa";
+	//private static final String secret = "781e0684cedd7aafb609adb7d6d6e1d0";
+
+	//product account
+	private static final String appid = "wx458a41033e38238c";
+	private static final String secret = "a3fbaed5c3c174afdb5a6e6f9e7396e2";
+
+
+	public String getUserInfo(){
+		String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
+		String user_info_url ="https://api.weixin.qq.com/cgi-bin/user/info";
+		String access_token_info = HttpRequestUtil.sendGet(access_token_url,"grant_type=client_credential&appid="+appid+"&secret="+secret);
+		try {
+			JSONObject jsonObject = new JSONObject(access_token_info);
+			String access_token = jsonObject.getString("access_token");
+			String user_info = HttpRequestUtil.sendGet(user_info_url, "access_token="+access_token+"&openid=ol1a1s3jqjsqi61ilWLpvogJQrAQ&lang=zh_CN");
+			JSONObject user_info_json = new JSONObject(user_info);
+			String nickname = "";
+			String subscribe_time ="";
+			String city ="";
+			String sex = "";
+			String openid ="";
+			String d ="";
+			if(user_info_json.has("nickname")){
+				SimpleDateFormat format =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+				nickname = user_info_json.getString("nickname");
+				subscribe_time = user_info_json.getString("subscribe_time");
+				Long time=new Long(subscribe_time);
+				d = format.format(time*1000);
+				city = user_info_json.getString("city");
+				sex = user_info_json.getString("sex");
+				if("1".equals(sex)){
+					sex = "男";
+				}else if("2".equals(sex)){
+					sex = "女";
+				}else{
+					sex = "未知";
+				}
+				openid = user_info_json.getString("openid");
+			}
+			System.out.println("openid:"+openid+"  姓名:"+nickname+"  关注时间:"+d+"  城市:"+city+"  性别:"+sex);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} 
+		return SUCCESS;
+	}
 
 	public String dealWeChat() throws Exception{
 		HttpServletResponse response = ServletActionContext.getResponse();
@@ -65,13 +114,13 @@ public class WeChatAction extends ActionSupport {
 		textMessage.setFromUserName(toUserName);  
 		textMessage.setCreateTime(new Date().getTime());  
 		textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
-		
+
 		NewsMessage newsMessage = new NewsMessage();  
 		newsMessage.setToUserName(fromUserName);  
 		newsMessage.setFromUserName(toUserName);  
 		newsMessage.setCreateTime(new Date().getTime());  
 		newsMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_NEWS); 
-		
+
 		// 文本消息  
 		if (MessageUtil.RESP_MESSAGE_TYPE_TEXT.equals(msgType)) { 
 			//处理用户输入信息
@@ -101,11 +150,16 @@ public class WeChatAction extends ActionSupport {
 					weChatUserInfo.setMobile(content);
 					weChatUserInfo.setUserName(userName);
 				}
-				//调用接口存储数据，并判断用户是否已经参与过，如果参与过，提示用户等待开奖
 				//TODO 调用service
+				//调用接口存储数据，并判断用户是否已经参与过，如果参与过，提示用户等待开奖
 
-				//如果没有参与过
+
+				//如果没有参与
 				respContent = userName+",您已成功参与抽奖活动,谢谢参与！";  
+
+
+				//如果已经参与
+				respContent = "很抱歉，一个微信号只能抽奖一次。";  
 			}else if(content.contains("贷款")||content.contains("借钱")||content.contains("申请贷款")||content.contains("我要贷款")||content.contains("贷款申请")||content.contains("购物贷款")||content.contains("婚庆贷款")||content.contains("教育贷款")||content.contains("旅游贷款")||content.contains("	 房屋装修贷款")){//处理规则1 
 				respContent = "不用急~乐融来帮您！您可以点击底部菜单“贷款申请”或点击这个链接https://www.happyfi.com/borrow/yxcommon.html?channel=weixin_main轻松实现贷款。轻松填资料，快乐拿贷款！网购不剁手，名牌随心购。乐融贷款-您的移动ATM！​";  
 			}else if(content.contains("公司")||content.contains("公司简介")||content.contains("公司介绍")||content.contains("介绍")||content.contains("乐融")||content.contains("HAPPYFI")||content.contains("happyfi")||content.contains("乐融贷款")||content.contains("上海乐融")||content.contains("简介")){//处理规则2 
@@ -185,7 +239,7 @@ public class WeChatAction extends ActionSupport {
 				out.print(respXml); 
 			}
 			if(MessageUtil.EVENT_TYPE_CLICK.equals(event)){
-				
+
 				if("apply_meterial".equals(eventKey)){
 					List<Article> articleList = new ArrayList<Article>();  
 					Article article = new Article();  
