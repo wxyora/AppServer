@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.opensymphony.xwork2.ActionSupport;
@@ -42,16 +43,34 @@ public class WeChatAction extends ActionSupport {
 	//product account
 	private static final String appid = "wx458a41033e38238c";
 	private static final String secret = "a3fbaed5c3c174afdb5a6e6f9e7396e2";
-
-
-	public String getUserInfo(){
+	
+	public String getUserInfo() throws JSONException{
+		
+		//get token
 		String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
-		String user_info_url ="https://api.weixin.qq.com/cgi-bin/user/info";
+		String openId_list_url = "https://api.weixin.qq.com/cgi-bin/user/get";
 		String access_token_info = HttpRequestUtil.sendGet(access_token_url,"grant_type=client_credential&appid="+appid+"&secret="+secret);
+		JSONObject jsonObject = new JSONObject(access_token_info);
+		String access_token = jsonObject.getString("access_token");
+		
+		String openId_list = HttpRequestUtil.sendGet(openId_list_url,"access_token="+access_token);
+		JSONObject openId_list_json = new JSONObject(openId_list);
+		String data = openId_list_json.getString("data");
+		JSONObject dd = new JSONObject(data);
+		String openIdList = dd.getString("openid");
+		JSONArray jsonArray = new JSONArray(openIdList);
+		for (int i = 0; i < jsonArray.length(); i++) {
+			String openid =(String)jsonArray.get(i);
+			printUserInfo(openid,access_token);
+		}
+		return SUCCESS;
+	}
+
+
+	public String printUserInfo(String openId,String access_token){
+		String user_info_url ="https://api.weixin.qq.com/cgi-bin/user/info";
 		try {
-			JSONObject jsonObject = new JSONObject(access_token_info);
-			String access_token = jsonObject.getString("access_token");
-			String user_info = HttpRequestUtil.sendGet(user_info_url, "access_token="+access_token+"&openid=ol1a1s3jqjsqi61ilWLpvogJQrAQ&lang=zh_CN");
+			String user_info = HttpRequestUtil.sendGet(user_info_url, "access_token="+access_token+"&openid="+openId+"&lang=zh_CN");
 			JSONObject user_info_json = new JSONObject(user_info);
 			String nickname = "";
 			String subscribe_time ="";
