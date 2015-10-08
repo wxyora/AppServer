@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 public class HttpRequestUtil {
     /**
-     * ÏòÖ¸¶¨URL·¢ËÍGET·½·¨µÄÇëÇó
+     * ï¿½ï¿½Ö¸ï¿½ï¿½URLï¿½ï¿½ï¿½ï¿½GETï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      * 
      * @param url
-     *            ·¢ËÍÇëÇóµÄURL
+     *            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½URL
      * @param param
-     *            ÇëÇó²ÎÊý£¬ÇëÇó²ÎÊýÓ¦¸ÃÊÇ name1=value1&name2=value2 µÄÐÎÊ½¡£
-     * @return URL Ëù´ú±íÔ¶³Ì×ÊÔ´µÄÏìÓ¦½á¹û
+     *            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ name1=value1&name2=value2 ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
+     * @return URL ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½
      */
     public static String sendGet(String url, String param) {
         String result = "";
@@ -24,22 +24,22 @@ public class HttpRequestUtil {
         try {
             String urlNameString = url + "?" + param;
             URL realUrl = new URL(urlNameString);
-            // ´ò¿ªºÍURLÖ®¼äµÄÁ¬½Ó
+            // ï¿½ò¿ªºï¿½URLÖ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             URLConnection connection = realUrl.openConnection();
-            // ÉèÖÃÍ¨ÓÃµÄÇëÇóÊôÐÔ
+            // ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty("user-agent",
                     "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            // ½¨Á¢Êµ¼ÊµÄÁ¬½Ó
+            // ï¿½ï¿½ï¿½ï¿½Êµï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½
             connection.connect();
-            // »ñÈ¡ËùÓÐÏìÓ¦Í·×Ö¶Î
+            // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Í·ï¿½Ö¶ï¿½
             Map<String, List<String>> map = connection.getHeaderFields();
-            // ±éÀúËùÓÐµÄÏìÓ¦Í·×Ö¶Î
-            for (String key : map.keySet()) {
-                System.out.println(key + "--->" + map.get(key));
-            }
-            // ¶¨Òå BufferedReaderÊäÈëÁ÷À´¶ÁÈ¡URLµÄÏìÓ¦
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½Ó¦Í·ï¿½Ö¶ï¿½
+           /* for (String key : map.keySet()) {
+             //   System.out.println(key + "--->" + map.get(key));
+            }*/
+            // ï¿½ï¿½ï¿½ï¿½ BufferedReaderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡URLï¿½ï¿½ï¿½ï¿½Ó¦
             in = new BufferedReader(new InputStreamReader(
                     connection.getInputStream()));
             String line;
@@ -47,10 +47,10 @@ public class HttpRequestUtil {
                 result += line;
             }
         } catch (Exception e) {
-            System.out.println("·¢ËÍGETÇëÇó³öÏÖÒì³££¡" + e);
+           // System.out.println("ï¿½ï¿½ï¿½ï¿½GETï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½" + e);
             e.printStackTrace();
         }
-        // Ê¹ÓÃfinally¿éÀ´¹Ø±ÕÊäÈëÁ÷
+        // Ê¹ï¿½ï¿½finallyï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         finally {
             try {
                 if (in != null) {
@@ -64,13 +64,13 @@ public class HttpRequestUtil {
     }
 
     /**
-     * ÏòÖ¸¶¨ URL ·¢ËÍPOST·½·¨µÄÇëÇó
+     * ï¿½ï¿½Ö¸ï¿½ï¿½ URL ï¿½ï¿½ï¿½ï¿½POSTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      * 
      * @param url
-     *            ·¢ËÍÇëÇóµÄ URL
+     *            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ URL
      * @param param
-     *            ÇëÇó²ÎÊý£¬ÇëÇó²ÎÊýÓ¦¸ÃÊÇ name1=value1&name2=value2 µÄÐÎÊ½¡£
-     * @return Ëù´ú±íÔ¶³Ì×ÊÔ´µÄÏìÓ¦½á¹û
+     *            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ name1=value1&name2=value2 ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
+     * @return ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½
      */
     public static String sendPost(String url, String param) {
         PrintWriter out = null;
@@ -78,23 +78,23 @@ public class HttpRequestUtil {
         String result = "";
         try {
             URL realUrl = new URL(url);
-            // ´ò¿ªºÍURLÖ®¼äµÄÁ¬½Ó
+            // ï¿½ò¿ªºï¿½URLÖ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             URLConnection conn = realUrl.openConnection();
-            // ÉèÖÃÍ¨ÓÃµÄÇëÇóÊôÐÔ
+            // ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
             conn.setRequestProperty("user-agent",
                     "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            // ·¢ËÍPOSTÇëÇó±ØÐëÉèÖÃÈçÏÂÁ½ÐÐ
+            // ï¿½ï¿½ï¿½ï¿½POSTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            // »ñÈ¡URLConnection¶ÔÏó¶ÔÓ¦µÄÊä³öÁ÷
+            // ï¿½ï¿½È¡URLConnectionï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             out = new PrintWriter(conn.getOutputStream());
-            // ·¢ËÍÇëÇó²ÎÊý
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             out.print(param);
-            // flushÊä³öÁ÷µÄ»º³å
+            // flushï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½
             out.flush();
-            // ¶¨ÒåBufferedReaderÊäÈëÁ÷À´¶ÁÈ¡URLµÄÏìÓ¦
+            // ï¿½ï¿½ï¿½ï¿½BufferedReaderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡URLï¿½ï¿½ï¿½ï¿½Ó¦
             in = new BufferedReader(
                     new InputStreamReader(conn.getInputStream()));
             String line;
@@ -102,10 +102,10 @@ public class HttpRequestUtil {
                 result += line;
             }
         } catch (Exception e) {
-            System.out.println("·¢ËÍ POST ÇëÇó³öÏÖÒì³££¡"+e);
+            System.out.println("ï¿½ï¿½ï¿½ï¿½ POST ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£ï¿½ï¿½"+e);
             e.printStackTrace();
         }
-        //Ê¹ÓÃfinally¿éÀ´¹Ø±ÕÊä³öÁ÷¡¢ÊäÈëÁ÷
+        //Ê¹ï¿½ï¿½finallyï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         finally{
             try{
                 if(out!=null){

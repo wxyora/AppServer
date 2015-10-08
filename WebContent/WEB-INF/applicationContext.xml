@@ -12,7 +12,7 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/celechem" />
+		<property name="url" value="jdbc:mysql://localhost:3306/celechem?useUnicode=true&amp;characterEncoding=utf-8"></property>
 		<property name="username" value="waylon" />
 		<!-- property池启动时的初始值 -->
 		<property name="password" value="wxy408922" />
@@ -67,7 +67,16 @@
 	
 	<!-- 微信管理 -->
 	<bean id="weChatAction" class="waylon.action.WeChatAction">
+		<property name="weChatInfoService" ref="weChatInfoService" />
+	</bean>
 	
+	<bean id="weChatInfoService" class="waylon.service.impl.WeChatInfoServiceImpl">
+		<property name="weChatInfoDao" ref="weChatInfoDao" />
+	</bean>
+	
+	<bean id="weChatInfoDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="waylon.dao.WeChatInfoDao" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
 
 </beans>

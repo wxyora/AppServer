@@ -17,7 +17,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.opensymphony.xwork2.ActionSupport;
+
+import waylon.domain.WeChatUserDetailInfo;
 import waylon.domain.WeChatUserInfo;
+import waylon.service.WeChatInfoService;
 import waylon.wechat.Article;
 import waylon.wechat.HttpRequestUtil;
 import waylon.wechat.MessageUtil;
@@ -35,6 +38,8 @@ public class WeChatAction extends ActionSupport {
 	private String timestamp;
 	private String nonce;
 	private String echostr;
+	
+	
 	//test account
 
 	//private static final String appid = "wx55ccb70d4c7330aa";
@@ -44,6 +49,9 @@ public class WeChatAction extends ActionSupport {
 	private static final String appid = "wx458a41033e38238c";
 	private static final String secret = "a3fbaed5c3c174afdb5a6e6f9e7396e2";
 	
+	private WeChatInfoService weChatInfoService;
+
+
 	public String getUserInfo() throws JSONException{
 		
 		//get token
@@ -63,12 +71,19 @@ public class WeChatAction extends ActionSupport {
 			String openid =(String)jsonArray.get(i);
 			printUserInfo(openid,access_token);
 		}
-		return SUCCESS;
+		return null;
 	}
 
 
-	public String printUserInfo(String openId,String access_token){
+	public void printUserInfo(String openId,String access_token){
 		String user_info_url ="https://api.weixin.qq.com/cgi-bin/user/info";
+		HttpServletResponse response = ServletActionContext.getResponse();
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		try {
 			String user_info = HttpRequestUtil.sendGet(user_info_url, "access_token="+access_token+"&openid="+openId+"&lang=zh_CN");
 			JSONObject user_info_json = new JSONObject(user_info);
@@ -78,7 +93,7 @@ public class WeChatAction extends ActionSupport {
 			String sex = "";
 			String openid ="";
 			String d ="";
-			if(user_info_json.has("nickname")){
+			if(user_info_json.has("subscribe_time")){
 				SimpleDateFormat format =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 				nickname = user_info_json.getString("nickname");
 				subscribe_time = user_info_json.getString("subscribe_time");
@@ -94,13 +109,22 @@ public class WeChatAction extends ActionSupport {
 					sex = "未知";
 				}
 				openid = user_info_json.getString("openid");
+			
+				//System.out.println("openid:"+openid+"  姓名:"+nickname+"  关注时间:"+d+"  城市:"+city+"  性别:"+sex);
+				
+				
+				WeChatUserDetailInfo detailInfo = new WeChatUserDetailInfo();
+				detailInfo.setCity(city);
+				detailInfo.setNickName(nickname);
+				detailInfo.setOpenId(openid);
+				detailInfo.setSubscribeDate(d);
+				detailInfo.setSex(sex);
+				weChatInfoService.addWeChatUserInfo(detailInfo);
+				
 			}
-			System.out.println("openid:"+openid+"  姓名:"+nickname+"  关注时间:"+d+"  城市:"+city+"  性别:"+sex);
-
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} 
-		return SUCCESS;
 	}
 
 	public String dealWeChat() throws Exception{
@@ -434,6 +458,17 @@ public class WeChatAction extends ActionSupport {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+	
+	public WeChatInfoService getWeChatInfoService() {
+		return weChatInfoService;
+	}
+
+
+	public void setWeChatInfoService(WeChatInfoService weChatInfoService) {
+		this.weChatInfoService = weChatInfoService;
+	}
+
 
 
 }
