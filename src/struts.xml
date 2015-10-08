@@ -47,11 +47,8 @@
 		
 		<action name="getUserInfo" class="weChatAction"  
 			method="getUserInfo">
-			<result  type="json">
-				
-			</result>
+			<result name="SUCCESS">/page/showWeChatUserInfo.jsp</result>
 		</action>
-		
 		
 		
 	</package>
