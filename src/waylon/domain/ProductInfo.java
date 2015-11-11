@@ -6,6 +6,7 @@ public class ProductInfo {
 	private String productName;
 	private String productPrice;
 	private String productModel;
+	
 	public String getProductId() {
 		return productId;
 	}

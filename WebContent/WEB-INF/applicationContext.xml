@@ -78,5 +78,12 @@
 		<property name="mapperInterface" value="waylon.dao.WeChatInfoDao" />
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>
+	
+	<!-- 林超 -->
+	<bean id="linChaoAction" class="waylon.action.LinChaoAction">
+		<!-- <property name="weChatInfoService" ref="weChatInfoService" /> -->
+	</bean>
+	
+	
 
 </beans>

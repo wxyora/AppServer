@@ -50,6 +50,19 @@
 			<result name="SUCCESS">/page/showWeChatUserInfo.jsp</result>
 		</action>
 		
+		<action name="getFlag" class="linChaoAction"  
+			method="getFlag">
+			<result  type="json">
+				 <param name="root">result</param>  
+			</result>
+		</action>
+		
+		<action name="setFlag" class="linChaoAction"  
+			method="setFlag">
+			<result  type="json">
+				 <param name="root">result</param>  
+			</result>
+		</action>
 		
 	</package>
 
