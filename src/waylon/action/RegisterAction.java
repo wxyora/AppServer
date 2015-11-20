@@ -5,6 +5,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletSecurityElement;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.catalina.connector.Request;
+import org.apache.struts2.ServletActionContext;
+
 import com.opensymphony.xwork2.ActionSupport;
 
 import net.sf.json.JSONObject;
@@ -25,6 +31,7 @@ public class RegisterAction extends ActionSupport{
 	private String result;
 	private Map resultMap;
 	private String mobile;
+	private String token;
 	public Map getResultMap() {
 		return resultMap;
 	}
@@ -40,6 +47,8 @@ public class RegisterAction extends ActionSupport{
 	private UserInfoService userInfoService;
 
 	private TokenInfoService tokenInfoService;
+	
+	HttpServletRequest request;
 
 	@Override
 	public String execute() throws Exception {
@@ -57,12 +66,12 @@ public class RegisterAction extends ActionSupport{
 				int requestCode = userInfoService.addUser(userInfoMO);
 				String requestStr = String.valueOf(requestCode);
 				if("1".equals(requestStr)){
-					result = "1";//成功
+					result = "1";
 				}else{
-					result = "0";//失败
+					result = "0";
 				}
 			}else{
-				result = "2";//已存在
+				result = "2";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,12 +80,18 @@ public class RegisterAction extends ActionSupport{
 	}
 
 	public String findUserByMobile(){
+		HttpServletRequest request = ServletActionContext.getRequest();
 		UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
-		if(userInfo ==null){
-			result = "0";//不存在
+		if("NO".equals(request.getAttribute("tokenStatus"))){
+			result = "unToken";
 		}else{
-			result = "1";//存在
+			if(userInfo ==null){
+				result = "0";
+			}else{
+				result = "1";
+			}
 		}
+		
 		return SUCCESS;
 	}
 
@@ -84,7 +99,7 @@ public class RegisterAction extends ActionSupport{
 
 		UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
 		if(userInfo ==null){
-			result = "0";//不存在
+			result = "0";
 		}else{
 			if(password.equals(userInfo.getPassword())){
 				TokenInfo tokenInfo = tokenInfoService.getTokenInfoByMobile(mobile);
@@ -189,6 +204,14 @@ public class RegisterAction extends ActionSupport{
 
 	public void setTokenInfoService(TokenInfoService tokenInfoService) {
 		this.tokenInfoService = tokenInfoService;
+	}
+
+	public String getToken() {
+		return token; 
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

@@ -38,29 +38,29 @@ public class WeChatAction extends ActionSupport {
 	private String timestamp;
 	private String nonce;
 	private String echostr;
-	
-	
+
+
 	//test account
 
-	//private static final String appid = "wx55ccb70d4c7330aa";
-	//private static final String secret = "781e0684cedd7aafb609adb7d6d6e1d0";
+	private static final String appid = "wx55ccb70d4c7330aa";
+	private static final String secret = "781e0684cedd7aafb609adb7d6d6e1d0";
 
 	//product account
-	private static final String appid = "wx458a41033e38238c";
-	private static final String secret = "a3fbaed5c3c174afdb5a6e6f9e7396e2";
-	
+	//private static final String appid = "wx458a41033e38238c";
+	//private static final String secret = "a3fbaed5c3c174afdb5a6e6f9e7396e2";
+
 	private WeChatInfoService weChatInfoService;
 
 
 	public String getUserInfo() throws JSONException{
-		
+
 		//get token
 		String access_token_url = "https://api.weixin.qq.com/cgi-bin/token";
 		String openId_list_url = "https://api.weixin.qq.com/cgi-bin/user/get";
 		String access_token_info = HttpRequestUtil.sendGet(access_token_url,"grant_type=client_credential&appid="+appid+"&secret="+secret);
 		JSONObject jsonObject = new JSONObject(access_token_info);
 		String access_token = jsonObject.getString("access_token");
-		
+
 		String openId_list = HttpRequestUtil.sendGet(openId_list_url,"access_token="+access_token);
 		JSONObject openId_list_json = new JSONObject(openId_list);
 		String data = openId_list_json.getString("data");
@@ -109,10 +109,10 @@ public class WeChatAction extends ActionSupport {
 					sex = "未知";
 				}
 				openid = user_info_json.getString("openid");
-			
+
 				//System.out.println("openid:"+openid+"  姓名:"+nickname+"  关注时间:"+d+"  城市:"+city+"  性别:"+sex);
-				
-				
+
+
 				WeChatUserDetailInfo detailInfo = new WeChatUserDetailInfo();
 				detailInfo.setCity(city);
 				detailInfo.setNickName(nickname);
@@ -120,7 +120,7 @@ public class WeChatAction extends ActionSupport {
 				detailInfo.setSubscribeDate(d);
 				detailInfo.setSex(sex);
 				weChatInfoService.addWeChatUserInfo(detailInfo);
-				
+
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -139,8 +139,10 @@ public class WeChatAction extends ActionSupport {
 			e.printStackTrace();
 		}
 		// 通过检验signature对请求进行校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
-		if (SignUtil.checkSignature(signature, timestamp, nonce)) {
-			out.print(echostr);
+		if(signature!=null&&timestamp!=null&&nonce!=null){
+			if (SignUtil.checkSignature(signature, timestamp, nonce)) {
+				out.print(echostr);
+			}
 		}
 
 		//调用parseXml方法解析请求消息
@@ -402,7 +404,7 @@ public class WeChatAction extends ActionSupport {
 		}
 
 		out.close();  
-		return SUCCESS;
+		return null;
 	}
 
 	public  boolean isMobile(String str) {   
@@ -458,8 +460,8 @@ public class WeChatAction extends ActionSupport {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	
+
+
 	public WeChatInfoService getWeChatInfoService() {
 		return weChatInfoService;
 	}
