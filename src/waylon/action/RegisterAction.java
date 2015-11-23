@@ -58,6 +58,7 @@ public class RegisterAction extends ActionSupport{
 	public String register() throws Exception {
 
 		try {
+			
 			UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
 			if(null == userInfo){
 				UserInfo userInfoMO = new UserInfo();
@@ -66,12 +67,36 @@ public class RegisterAction extends ActionSupport{
 				int requestCode = userInfoService.addUser(userInfoMO);
 				String requestStr = String.valueOf(requestCode);
 				if("1".equals(requestStr)){
-					result = "1";
+					TokenInfo tokenInfo = tokenInfoService.getTokenInfoByMobile(mobile);
+					TokenInfo tokenInfoTemp = new TokenInfo();
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("YYYY-MM-dd hh:mm:ss");
+					Date date = new Date();
+					String modifyDate = simpleDateFormat.format(date);
+					if(tokenInfo!=null){
+						tokenInfoTemp.setMobile(mobile);
+						tokenInfoTemp.setModifyDate(modifyDate);
+						tokenInfoTemp.setTokenValue(mobile+date.getTime());
+						tokenInfoService.updateTokenByMobile(tokenInfoTemp);
+					}else{
+						tokenInfoTemp.setMobile(mobile);
+						tokenInfoTemp.setCreateDate(modifyDate);
+						tokenInfoTemp.setTokenValue(mobile+date.getTime());
+						tokenInfoService.addToken(tokenInfoTemp);
+					}
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("result","1");
+					map.put("mobile",mobile);
+					map.put("token", tokenInfoTemp.getTokenValue());
+					resultMap = map;
 				}else{
-					result = "0";
+					Map<String, String> map = new HashMap<String, String>();
+					map.put("result","0");
+					resultMap = map;
 				}
 			}else{
-				result = "2";
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("result","2");
+				resultMap = map;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -82,16 +107,16 @@ public class RegisterAction extends ActionSupport{
 	public String findUserByMobile(){
 		HttpServletRequest request = ServletActionContext.getRequest();
 		UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
-		if("NO".equals(request.getAttribute("tokenStatus"))){
-			result = "unToken";
+	
+		if(userInfo==null){  
+			result = "0";
 		}else{
-			if(userInfo ==null){
-				result = "0";
+			if("NO".equals(request.getAttribute("tokenStatus"))){
+				result = "unToken";
 			}else{
 				result = "1";
 			}
 		}
-		
 		return SUCCESS;
 	}
 
@@ -99,7 +124,9 @@ public class RegisterAction extends ActionSupport{
 
 		UserInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
 		if(userInfo ==null){
-			result = "0";
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("result","0");
+			resultMap = map;
 		}else{
 			if(password.equals(userInfo.getPassword())){
 				TokenInfo tokenInfo = tokenInfoService.getTokenInfoByMobile(mobile);
@@ -120,11 +147,14 @@ public class RegisterAction extends ActionSupport{
 				}
 				Map<String, String> map = new HashMap<String, String>();
 				map.put("result","1");
+				map.put("mobile",mobile);
 				map.put("token", tokenInfoTemp.getTokenValue());
 				resultMap = map;
 				
 			}else{
-				result = "3";
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("result","3");
+				resultMap = map;
 			}
 		}
 		return SUCCESS;
