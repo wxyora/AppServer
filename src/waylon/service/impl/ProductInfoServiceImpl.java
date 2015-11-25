@@ -3,6 +3,7 @@ package waylon.service.impl;
 import java.util.List;
 
 import waylon.dao.ProductInfoDao;
+import waylon.domain.PageInfo;
 import waylon.domain.ProductInfo;
 import waylon.service.ProductInfoService;
 
@@ -16,8 +17,12 @@ public class ProductInfoServiceImpl implements ProductInfoService {
 		this.productInfoDao = productInfoDao;
 	}
 	@Override
-	public List<ProductInfo> getAllProductInfo() {
-		return productInfoDao.getAllProdutInfo();
+	public List<ProductInfo> getProductInfo(PageInfo pageInfo) {
+		return productInfoDao.getProdutInfo(pageInfo);
+	}
+	@Override
+	public int getAllProductInfoCount() {
+		return productInfoDao.getAllProdutInfoCount();
 	}
 
 	

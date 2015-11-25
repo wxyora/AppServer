@@ -3,8 +3,14 @@
 
 <mapper namespace="waylon.dao.ProductInfoDao">
 
-    <select id="getAllProdutInfo"  resultType="waylon.domain.ProductInfo">
-        select * from  product_info
+    <select id="getProdutInfo" parameterType="waylon.domain.PageInfo" resultType="waylon.domain.ProductInfo">
+    <![CDATA[
+      	select * from  product_info where productid > #{beginNum} and productid <= #{endNum} order by productid desc
+    ]]>
+    </select>
+    
+     <select id="getAllProdutInfoCount"  resultType="int">
+        select count(1) from  product_info
     </select>
     
 </mapper> 

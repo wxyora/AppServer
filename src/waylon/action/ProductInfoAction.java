@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.opensymphony.xwork2.ActionSupport;
 
+import waylon.domain.PageInfo;
 import waylon.domain.ProductInfo;
 import waylon.service.ProductInfoService;
 
@@ -17,9 +18,14 @@ public class ProductInfoAction extends ActionSupport {
 	private ProductInfoService productInfoService;
 	
 	private List<ProductInfo>  result;
+	private int  pageNo;
 	
 	public String getProductInfo(){
-		result = productInfoService.getAllProductInfo();
+		int maxNum = productInfoService.getAllProductInfoCount();
+		int beginNum = maxNum - (pageNo+1) * 10;
+		int endNum = beginNum + 10;
+		PageInfo pageInfo = new PageInfo(beginNum,endNum);
+		result = productInfoService.getProductInfo(pageInfo);
 		return SUCCESS;
 	}
 
@@ -41,6 +47,14 @@ public class ProductInfoAction extends ActionSupport {
 
 	public void setResult(List<ProductInfo> result) {
 		this.result = result;
+	}
+
+	public int getPageNo() {
+		return pageNo;
+	}
+
+	public void setPageNo(int pageNo) {
+		this.pageNo = pageNo;
 	}
 	
 
