@@ -7,63 +7,61 @@
 
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
 	<constant name="struts.devMode" value="true" />
-    <!--  <constant name="struts.objectFactory" value="spring"></constant>   -->
+	<!-- <constant name="struts.objectFactory" value="spring"></constant> -->
 
 	<package name="default" namespace="/" extends="json-default">
-		<action name="register" class="userInfoAction"  
-			method="register">
-			 <result type="json">
-				<param name="root">resultMap</param>  
-			</result> 
+		<action name="register" class="userInfoAction" method="register">
+			<result type="json">
+				<param name="root">resultMap</param>
+			</result>
 		</action>
-		
-		<action name="findUserByMobile" class="userInfoAction"  
-			method="findUserByMobile">
+
+		<action name="findUserByMobile" class="userInfoAction" method="findUserByMobile">
 			<result type="json">
 				<param name="contentType">text/html</param>
 			</result>
 		</action>
-		
-		<action name="loginValidate" class="userInfoAction"  
-			method="loginValidate">
-			 <result type="json">
-				<param name="root">resultMap</param>  
-			</result> 
-		</action>
-		
-		<action name="getProductInfo" class="productInfoAction"  
-			method="getProductInfo">
-			<result  type="json">
-				 <param name="root">result</param>  
+
+		<action name="loginValidate" class="userInfoAction" method="loginValidate">
+			<result type="json">
+				<param name="root">resultMap</param>
 			</result>
 		</action>
-		
-		<action name="dealWeChat" class="weChatAction"  
-			method="dealWeChat">
-			<result  type="json">
-				
+
+		<action name="getProductInfo" class="productInfoAction" method="getProductInfo">
+			<result type="json">
+				<param name="root">result</param>
 			</result>
 		</action>
-		
-		<action name="getUserInfo" class="weChatAction"  
-			method="getUserInfo">
+
+		<action name="dealWeChat" class="weChatAction" method="dealWeChat">
+			<result type="json">
+
+			</result>
+		</action>
+
+		<action name="getUserInfo" class="weChatAction" method="getUserInfo">
 			<result name="SUCCESS">/page/showWeChatUserInfo.jsp</result>
 		</action>
-		
-		<action name="getFlag" class="linChaoAction"  
-			method="getFlag">
-			<result  type="json">
-				 <param name="root">result</param>  
+
+		<action name="getFlag" class="linChaoAction" method="getFlag">
+			<result type="json">
+				<param name="root">result</param>
 			</result>
 		</action>
-		
-		<action name="setFlag" class="linChaoAction"  
-			method="setFlag">
-			<result  type="json">
-				 <param name="root">result</param>  
+
+		<action name="setFlag" class="linChaoAction" method="setFlag">
+			<result type="json">
+				<param name="root">result</param>
 			</result>
 		</action>
-		
+
+		<action name="uploadImgInfo" class="imgInfoAction" method="uploadImgInfo">
+			<result type="json">
+				<param name="root">result</param>
+			</result>
+		</action>
+
 	</package>
 
 </struts>

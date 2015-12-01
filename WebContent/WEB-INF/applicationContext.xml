@@ -84,6 +84,11 @@
 		<!-- <property name="weChatInfoService" ref="weChatInfoService" /> -->
 	</bean>
 	
+	<!-- 林超 -->
+	<bean id="imgInfoAction" class="waylon.action.ImgInfoAction">
+		<!-- <property name="weChatInfoService" ref="weChatInfoService" /> -->
+	</bean>
+	
 	
 
 </beans>
