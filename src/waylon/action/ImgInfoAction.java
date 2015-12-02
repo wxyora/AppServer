@@ -1,5 +1,8 @@
 package waylon.action;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.opensymphony.xwork2.ActionSupport;
 
 public class ImgInfoAction extends ActionSupport {
@@ -11,15 +14,18 @@ public class ImgInfoAction extends ActionSupport {
 	
 	private String photo;
 	private String imgName;
+	private String imgCount;
 	private String result;
+	private String mobile;
+	Map<String, String> resultMap ;
 	
 	public String uploadImgInfo(){
-		result = "1";
-		System.out.println("photo:   "+photo);
-		System.out.println("imgName:   "+imgName);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("result",imgCount);
+		resultMap = map;
 		return SUCCESS;
 	}
-
+  
 
 	public String getImgName() {
 		return imgName;
@@ -53,6 +59,36 @@ public class ImgInfoAction extends ActionSupport {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+
+	public String getImgCount() {
+		return imgCount;
+	}
+
+
+	public void setImgCount(String imgCount) {
+		this.imgCount = imgCount;
+	}
+
+
+	public String getMobile() {
+		return mobile;
+	}
+
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+
+	public Map<String, String> getResultMap() {
+		return resultMap;
+	}
+
+
+	public void setResultMap(Map<String, String> resultMap) {
+		this.resultMap = resultMap;
 	}
 
 }

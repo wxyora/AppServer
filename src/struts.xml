@@ -46,7 +46,7 @@
 
 		<action name="getFlag" class="linChaoAction" method="getFlag">
 			<result type="json">
-				<param name="root">result</param>
+				<param name="root">text/html</param>
 			</result>
 		</action>
 
@@ -58,7 +58,7 @@
 
 		<action name="uploadImgInfo" class="imgInfoAction" method="uploadImgInfo">
 			<result type="json">
-				<param name="root">result</param>
+				<param name="root">resultMap</param>
 			</result>
 		</action>
 
